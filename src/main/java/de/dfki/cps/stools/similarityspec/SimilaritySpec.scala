@@ -15,6 +15,7 @@ import de.dfki.cps.utils.Stringxx
 import de.dfki.cps.stools.SimilaritySpecParser
 import de.dfki.cps.utils.Collectionxx
 import org.antlr.runtime.tree.Tree
+import scala.collection.JavaConverters._
 
 /**
  * Created by IntelliJ IDEA.
@@ -223,7 +224,7 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
       defaultSpec = Collectionxx.newList(new ElementSimilaritySpec(null, null, aspec, espec))
     }
     val especinst: List[ElementSimilaritySpec] = new ArrayList[ElementSimilaritySpec]
-    defaultSpec.forEach { espec =>
+    for (espec <- defaultSpec.asScala) {
       especinst.add(new ElementSimilaritySpec(namespaceURI, n, espec.annotationSimSpec, espec.subelementSimSpec))
     }
     return especinst
@@ -244,7 +245,7 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
         res = res + "  "
       case _ =>
         res = res + "\n  alternatives {\n"
-        es.forEach { e =>
+        for (e <- es.asScala) {
           res = res + "  {\n" + Stringxx.tabulate(e.toString, 4)
           res = res + "  }\n"
         }
@@ -258,10 +259,10 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
     if (!(namespaceContext.getNamespaceURI("") == XMLConstants.NULL_NS_URI)) res = res + " xmlns " + namespaceContext.getNamespaceURI("")
     if (!parents.isEmpty) {
       res = res + " extends "
-      parents.forEach { p => res = res + p + " " }
+      for (p <- parents.asScala) { res = res + p + " " }
     }
     res = res + " {\n"
-    namespaceContext.namespaces.keySet.forEach { prefix =>
+    for (prefix <- namespaceContext.namespaces.keySet.asScala) {
       if (!(prefix == "")) {
         res = res + "xmlns:" + prefix + "=" + namespaceContext.getNamespaceURI(prefix) + "\n"
       }
@@ -269,7 +270,7 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
     val keys: ArrayList[String] = new ArrayList[String]
     keys.addAll(entries.keySet)
     Collections.sort(keys)
-    keys.forEach { tagname =>
+    for (tagname <- keys.asScala) {
       val temp: String = "element " + tagname + " {"
       res = res + temp
       res = res + similarityEntriesToString(entries.get(tagname))
@@ -288,11 +289,11 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
   }
 
   def includeSimilaritySpec(spec: SimilaritySpec) {
-    spec.entries.keySet.forEach { name =>
+    for (name <- spec.entries.keySet.asScala) {
       if (!entries.containsKey(name)) {
         val es: List[ElementSimilaritySpec] = Collectionxx.copy(spec.entries.get(name))
         if (!spec.limit.isEmpty) {
-          es.forEach { e =>
+          for (e <- es.asScala) {
             if (e.subelementSimSpec.limit.isEmpty) e.subelementSimSpec.limit.addAll(spec.limit)
           }
         }
@@ -300,7 +301,7 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
       }
     }
     if (!defaultSpec.isEmpty) defaultSpec = Collectionxx.copy(spec.defaultSpec)
-    spec.namespaceContext.namespaces.keySet.forEach { prefix =>
+    for (prefix <- spec.namespaceContext.namespaces.keySet.asScala) {
       if (!namespaceContext.namespaces.containsKey(prefix)) {
         namespaceContext.namespaces.put(prefix, spec.namespaceContext.namespaces.get(prefix))
       }

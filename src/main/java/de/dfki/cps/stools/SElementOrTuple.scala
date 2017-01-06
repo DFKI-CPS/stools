@@ -6,6 +6,7 @@ package de.dfki.cps.stools
 import java.util.ArrayList
 
 import de.dfki.cps.stools.similarityspec.ElementNameSpec
+import scala.collection.JavaConverters._
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,8 +18,12 @@ import de.dfki.cps.stools.similarityspec.ElementNameSpec
 trait SElementOrTuple[T]
 
 class SElementTuple[T] extends ArrayList[ISElement[_]] with SElementOrTuple[T] {
+  implicit class CollectionImplicits[T](collection: java.util.Collection[T]) {
+    def forEach(f: T => Unit) = ???
+  }
+
   def contains(ens: ElementNameSpec): Boolean = {
-    this.forEach { e =>
+    for (e <- this.asScala) {
       if ((e.getNamespace == ens.getNamespace) && (e.getType == ens.getName)) return true
     }
     false
