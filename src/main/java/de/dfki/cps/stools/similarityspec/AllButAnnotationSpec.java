@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SAnnotation;
 import de.dfki.cps.utils.Collectionxx;
 
@@ -39,8 +39,8 @@ public class AllButAnnotationSpec extends AnnotationSpec {
     
     private <U> Boolean isExcluded(SAnnotation<U> sa) {
         for (AnnotationNameSpec ans : entries) {
-            if (ans.getNameSpace().equals(sa.getNameSpace()) &&
-                    ans.getName().equals(sa.getName())) {
+            if (ans.getNameSpace().equals(sa.namespace()) &&
+                    ans.getName().equals(sa.name())) {
                 return true;
             }
         }
@@ -79,10 +79,10 @@ public class AllButAnnotationSpec extends AnnotationSpec {
         return entries.size() > 0 && !Collectionxx.checkDuplicate(getAllAnnotationNames());
     }
 
-    public <T, U> List<AnnotationNameSpec> eval(ISElement<T> e,SimilaritySpec sspec) {
+    public <T, U> List<AnnotationNameSpec> eval(SElement<T> e,SimilaritySpec sspec) {
         ArrayList<AnnotationNameSpec> res = new ArrayList<AnnotationNameSpec>();
         for (SAnnotation<?> sa : e.getAnnotations()) {
-            if (!isExcluded(sa)) res.add(new AnnotationNameSpec(sa.getNameSpace(), sa.getName(), sspec));
+            if (!isExcluded(sa)) res.add(new AnnotationNameSpec(sa.namespace(), sa.name(), sspec));
         }
         return res;
     }

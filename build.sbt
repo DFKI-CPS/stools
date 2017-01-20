@@ -1,7 +1,7 @@
 organization := "de.dfki.cps"
 name := "stools"
 scalaVersion := "2.11.8"
-version := "1.0.1"
+version := "1.1.0"
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 bintrayOrganization := Some("dfki-cps")
 

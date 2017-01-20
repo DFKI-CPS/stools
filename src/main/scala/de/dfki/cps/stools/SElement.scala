@@ -4,43 +4,46 @@ import de.dfki.cps.stools.editscript.SEditScript
 import de.dfki.cps.stools.similarityspec.ElementSimilaritySpec
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 sealed trait SElementOrConflict[T]
 
-trait ISElement[T] extends SElementOrTuple[T] with SElementOrConflict[T] {
-  def getObject(): T
-  def getChildren(): java.util.List[ISElement[_]]
-  def getType(): String
-  def getNamespace(): String
-  def getLabel(): String
-  def getAnnotations(): java.util.List[SAnnotation[_]]
-  def hasAnnotation(namespace: String, name: String): java.lang.Boolean
-  def getAnnotation(namespace: String, name: String): SAnnotation[_]
-  def setEquivSpec(name: String): Unit
-  def getEquivSpec(): String
-  def setSimilaritySpec(s: ElementSimilaritySpec)
-  def getSimilaritySpec(): ElementSimilaritySpec
-  def getParent(): ISElement[_]
-  def copy(): ISElement[_]
-  def setEditScript(r: SEditScript)
-  def getEditScript(): SEditScript
-}
+trait SElement[T] extends SElementOrTuple[T] with SElementOrConflict[T] {
+  def underlying: T
+  def children: Seq[SElement[_]]
+  def label: String
+  def namespace: String
+  def annotations: Seq[SAnnotation[_]]
+  def parent: SElement[_]
+  def copy(): SElement[_]
 
-abstract class SElement[T] extends ISElement[T] {
+  def getChildren(): java.util.List[SElement[_]] = children.asJava
+  def getType(): String = label
+  def getLabel(): String = label
+  def getAnnotations(): java.util.List[SAnnotation[_]] = annotations.asJava
+  def hasAnnotation(namespace: String, name: String): Boolean =
+    annotations.exists(a => a.namespace == namespace && a.name == name)
+  def getAnnotation(namespace: String, name: String): SAnnotation[_] =
+    annotations.find(a => a.namespace == namespace && a.name == name).get
+
+  @BeanProperty var equivSpec: String = null
+  @BeanProperty var similaritySpec: ElementSimilaritySpec = null
+  def getParent(): SElement[_] = parent
+
   protected var patch = new SEditScript
 
-  override def setEditScript(r: SEditScript) = { 
+  def setEditScript(r: SEditScript) = {
     if (!patch.isEmpty) patch = new SEditScript()
     patch.insertAll(r)
   }
 
-  override def getEditScript() = patch
+  def getEditScript() = patch
 }
 
 case class SElementConflict[T](
     @BeanProperty `type`: SConflictTypes,
-    @BeanProperty left: java.util.List[ISElement[_]],
-    @BeanProperty right: java.util.List[ISElement[_]]) extends SElementOrConflict[T] {
+    @BeanProperty left: java.util.List[SElement[_]],
+    @BeanProperty right: java.util.List[SElement[_]]) extends SElementOrConflict[T] {
   override def toString = {
     val form =
       if (getType == SConflictTypes.list) "C(%s|%s)"

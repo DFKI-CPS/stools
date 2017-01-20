@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.utils.MostSimilarSubsequenceMapping;
 
 import java.util.List;
@@ -16,14 +16,14 @@ import java.util.List;
  * Time: 11:31
  * To change this template use File | Settings | File Templates.
  */
-public class MostSimilarSElementSubsequenceMapping extends MostSimilarSubsequenceMapping<ISElement<?>> {
-    private List<ISElement<?>> X;
-    private List<ISElement<?>> Y;
+public class MostSimilarSElementSubsequenceMapping extends MostSimilarSubsequenceMapping<SElement<?>> {
+    private List<SElement<?>> X;
+    private List<SElement<?>> Y;
     protected STool ST;
 
     public MostSimilarSElementSubsequenceMapping () {}
 
-    public MostSimilarSElementSubsequenceMapping(STool st, List<ISElement<?>> l, List<ISElement<?>> r) {
+    public MostSimilarSElementSubsequenceMapping(STool st, List<SElement<?>> l, List<SElement<?>> r) {
         super();
         X = l;
         Y = r;
@@ -31,17 +31,17 @@ public class MostSimilarSElementSubsequenceMapping extends MostSimilarSubsequenc
     }
 
     @Override
-    public void setX(List<ISElement<?>> xl) {
+    public void setX(List<SElement<?>> xl) {
         X = xl;
     }
 
     @Override
-    public void setY(List<ISElement<?>> yl) {
+    public void setY(List<SElement<?>> yl) {
         Y = yl;
     }
 
     @Override
-    public void initFrom(MostSimilarSubsequenceMapping<ISElement<?>> other) {
+    public void initFrom(MostSimilarSubsequenceMapping<SElement<?>> other) {
         if (other instanceof MostSimilarSElementSubsequenceMapping) {
             ST = ((MostSimilarSElementSubsequenceMapping) other).ST;
         }
@@ -58,22 +58,22 @@ public class MostSimilarSElementSubsequenceMapping extends MostSimilarSubsequenc
     }
 
     @Override
-    protected ISElement<?> valueOfX(int index) {
+    protected SElement<?> valueOfX(int index) {
         return X.get(index);
     }
 
     @Override
-    protected ISElement<?> valueOfY(int index) {
+    protected SElement<?> valueOfY(int index) {
         return Y.get(index);
     }
 
     @Override
-    protected double similarity(ISElement<?> x1, ISElement<?> y1) {
+    protected double similarity(SElement<?> x1, SElement<?> y1) {
         return ST.similarity(x1,y1);
     }
 
     @Override
-    protected Boolean equals(ISElement<?> x1, ISElement<?> y1) {
-        return (x1.getObject().equals(y1.getObject()));
+    protected Boolean equals(SElement<?> x1, SElement<?> y1) {
+        return (x1.underlying().equals(y1.underlying()));
     }
 }

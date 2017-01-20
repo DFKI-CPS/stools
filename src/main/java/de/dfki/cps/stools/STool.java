@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SElementConflict;
 import de.dfki.cps.stools.SElementOrConflict;
 import de.dfki.cps.stools.SToolInterface;
@@ -31,7 +31,7 @@ public class STool implements SToolInterface {
 
     private static final Log log = LogFactory.getLog(STool.class);
 
-    class SimilarityCache extends HashMap<ISElement<?>, Map<ISElement<?>, Double>> {
+    class SimilarityCache extends HashMap<SElement<?>, Map<SElement<?>, Double>> {
 		private static final long serialVersionUID = 1L;
 		
 		int all;
@@ -51,7 +51,7 @@ public class STool implements SToolInterface {
             return all;
         }
 
-        public Double isCached(ISElement<?> s, ISElement<?> t) {
+        public Double isCached(SElement<?> s, SElement<?> t) {
             all = all + 1;
             success = success + 1;
             if (this.containsKey(s) && this.get(s).containsKey(t)) return this.get(s).get(t);
@@ -62,8 +62,8 @@ public class STool implements SToolInterface {
             }
         }
 
-        public void cache(ISElement<?> s, ISElement<?> t, Double d) {
-            if (!this.containsKey(s)) put(s, new HashMap<ISElement<?>, Double>());
+        public void cache(SElement<?> s, SElement<?> t, Double d) {
+            if (!this.containsKey(s)) put(s, new HashMap<SElement<?>, Double>());
             get(s).put(t, d);
         }
 
@@ -88,27 +88,27 @@ public class STool implements SToolInterface {
         return spec;
     }
 
-    public double similarity(ISElement<?> a, ISElement<?> b) {
+    public double similarity(SElement<?> a, SElement<?> b) {
         assert (a.getEquivSpec().equals(b.getEquivSpec()));
         assert (a.getEquivSpec().equals(spec.getName()));
         //System.out.println("specname "+spec.getName());
         //System.out.println(String.format("A %s %s %s ",a.getNamespace(),a.getType(),a.getLabel()));
         //System.out.println(String.format("B %s %s %s ",b.getNamespace(),b.getType(),b.getLabel()));
         double result = 0.0;
-        if (a.getNamespace().equals(b.getNamespace()) &&
+        if (a.namespace().equals(b.namespace()) &&
                 a.getType().equals(b.getType()) &&
                 a.getLabel().equals(b.getLabel())) {
             List<de.dfki.cps.stools.similarityspec.ElementSimilaritySpec> specs =
-                    spec.getElementSimilaritySpecs(a.getNamespace(), a.getType());
+                    spec.getElementSimilaritySpecs(a.namespace(), a.getType());
             //System.out.println("Specs = "+specs);
             //similaritycache.reset();
             for (de.dfki.cps.stools.similarityspec.ElementSimilaritySpec subspec : specs) {
                 double temp = specSimilarity(subspec, a, b);
                 if (temp > result) {
                     result = temp;
-                    for (ISElement<?> f : new ISElement[]{a, b}) {
+                    for (SElement<?> f : new SElement[]{a, b}) {
                         f.setSimilaritySpec(subspec);
-                        for (ISElement<?> c : (List<ISElement<?>>) f.getChildren()) {
+                        for (SElement<?> c : (List<SElement<?>>) f.getChildren()) {
                             subspec.subelementSimSpec.setSubElementEquivSpec(c, spec.getName());
                         }
                     }
@@ -119,7 +119,7 @@ public class STool implements SToolInterface {
         return result;
     }
 
-    private double specSimilarity(de.dfki.cps.stools.similarityspec.ElementSimilaritySpec spec, ISElement<?> a, ISElement<?> b) {
+    private double specSimilarity(de.dfki.cps.stools.similarityspec.ElementSimilaritySpec spec, SElement<?> a, SElement<?> b) {
         // To compare two SElements we proceed as follows:
         // 1) Annotations:
         //    if for some absent spec, one of the elements has that annotation, then we return 0.0.
@@ -148,7 +148,7 @@ public class STool implements SToolInterface {
     }
 
 
-    private double specAnnotationSimilarity(de.dfki.cps.stools.similarityspec.ElementSimilaritySpec spec, ISElement<?> a, ISElement<?> b) {
+    private double specAnnotationSimilarity(de.dfki.cps.stools.similarityspec.ElementSimilaritySpec spec, SElement<?> a, SElement<?> b) {
         // we return -1.0 if an absent annotation is present or a mandatory annotation is not.
         Double result = 0.0;
         de.dfki.cps.stools.similarityspec.AnnotationSimilaritySpec eass =
@@ -168,7 +168,7 @@ public class STool implements SToolInterface {
             de.dfki.cps.stools.similarityspec.AnnotationNameSpec ans = (de.dfki.cps.stools.similarityspec.AnnotationNameSpec) as;
             if (!a.hasAnnotation(ans.getNameSpace(), ans.getName()) ||
                     !b.hasAnnotation(ans.getNameSpace(), ans.getName()) ||
-                    !a.getAnnotation(ans.getNameSpace(), ans.getName()).getValue().equals(b.getAnnotation(ans.getNameSpace(), ans.getName()).getValue())) {
+                    !a.getAnnotation(ans.getNameSpace(), ans.getName()).value().equals(b.getAnnotation(ans.getNameSpace(), ans.getName()).value())) {
                 result = -1.0;
 
             }
@@ -184,8 +184,8 @@ public class STool implements SToolInterface {
     }
 
     private double specElementSimilarity(de.dfki.cps.stools.similarityspec.ElementSimilaritySpec spec,
-                                         List<ISElement<?>> al,
-                                         List<ISElement<?>> bl,
+                                         List<SElement<?>> al,
+                                         List<SElement<?>> bl,
                                          de.dfki.cps.stools.similarityspec.SimilaritySpec s) {
         // we return -1.0 if an absent annotation is present or a mandatory annotation is not.
         Double result = 0.0;
@@ -265,7 +265,7 @@ public class STool implements SToolInterface {
     //
     // =============================================================
 
-    public SEditScript sdiff(ISElement<?> a, ISElement<?> b) {
+    public SEditScript sdiff(SElement<?> a, SElement<?> b) {
         similaritycache.reset();
         double sim = similarity(a, b);
 
@@ -283,7 +283,7 @@ public class STool implements SToolInterface {
         }
     }
 
-    private SEditScript diffAnnotations(ISElement<?> a, ISElement<?> b) {
+    private SEditScript diffAnnotations(SElement<?> a, SElement<?> b) {
         List<SAnnotation<?>> al = a.getAnnotations();
         List<SAnnotation<?>> bl = b.getAnnotations();
         MostSimilarSAnnotationDiffMapping m =
@@ -312,7 +312,7 @@ public class STool implements SToolInterface {
         return res;
     }
 
-    private SEditScript diffElements(ISElement<?> a, ISElement<?> b, ISElement<?> parent) {
+    private SEditScript diffElements(SElement<?> a, SElement<?> b, SElement<?> parent) {
         //System.out.println("DIFF "+a+" "+b+" sim = "+similarity(a, b));
         if (similarity(a, b) == 0.0) {
             SEditScript res = new SEditScript();
@@ -325,15 +325,15 @@ public class STool implements SToolInterface {
             //Debug.println("Similarity %s: %s vs %s ",similarity(a,b),a,b);
             SEditScript res = diffAnnotations(a, b);
 
-            List<ISElement<?>> al = a.getChildren();
-            for (ISElement<?> s : al)
+            List<SElement<?>> al = a.getChildren();
+            for (SElement<?> s : al)
                 if (s.getSimilaritySpec() == null) {
-                    s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.getNamespace(), s.getLabel()).get(0));
+                    s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.namespace(), s.getLabel()).get(0));
                 }
-            List<ISElement<?>> bl = b.getChildren();
-            for (ISElement<?> s : bl)
+            List<SElement<?>> bl = b.getChildren();
+            for (SElement<?> s : bl)
                 if (s.getSimilaritySpec() == null)
-                    s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.getNamespace(), s.getLabel()).get(0));
+                    s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.namespace(), s.getLabel()).get(0));
             //System.out.println(String.format("Children a: %s", al));
             //System.out.println(String.format("Children b: %s", bl));
             assert (a.getSimilaritySpec() != null);
@@ -407,12 +407,12 @@ public class STool implements SToolInterface {
     }
 
 
-    private void diffInsertDiffsAndRecurse(ISElement<?> a,
+    private void diffInsertDiffsAndRecurse(SElement<?> a,
                                            List<SElementOrTuple<?>> alprojection, List<SElementOrTuple<?>> blprojection,
                                            List<MostSimilarSubsequenceMapping.DiffEntry<SElementOrTuple<?>>> diff,
                                            SEditScript res) {
         ArrayList<SElementOrConflict<?>> added = new ArrayList<SElementOrConflict<?>>();
-        ArrayList<ISElement<?>> deleted = new ArrayList<ISElement<?>>();
+        ArrayList<SElement<?>> deleted = new ArrayList<SElement<?>>();
         //Debug.println(String.format("AL %s = ", alprojection.size()) + alprojection);
         //Debug.println(String.format("BL %s = ", blprojection.size()) + blprojection);
         //Debug.println("DIFF = " + diff);
@@ -423,26 +423,26 @@ public class STool implements SToolInterface {
             switch (d.getType()) {
                 case ADD:
                     if (d.getValue() instanceof SElementTuple<?>) {
-                        for (ISElement<?> e : ((SElementTuple<?>) d.getValue())) {
+                        for (SElement<?> e : ((SElementTuple<?>) d.getValue())) {
                             added.add(e);
                         }
-                    } else added.add((ISElement<?>) d.getValue());
+                    } else added.add((SElement<?>) d.getValue());
                     break;
                 case REMOVE:
                     if (d.getValue() instanceof SElementTuple<?>) {
-                        for (ISElement<?> e : ((SElementTuple<?>) d.getValue())) {
+                        for (SElement<?> e : ((SElementTuple<?>) d.getValue())) {
                             deleted.add(e);
                         }
-                    } else deleted.add((ISElement<?>) d.getValue());
+                    } else deleted.add((SElement<?>) d.getValue());
                     alpos = alpos + 1;
                     break;
                 case NONE:
                     break;
                 case UPDATE:
                     if (!added.isEmpty()) {
-                        ISElement<?> refelement;
-                        if (alprojection.get(alpos) instanceof ISElement)
-                            refelement = (ISElement<?>) alprojection.get(alpos);
+                        SElement<?> refelement;
+                        if (alprojection.get(alpos) instanceof SElement)
+                            refelement = (SElement<?>) alprojection.get(alpos);
                         else refelement = ((SElementTuple<?>) alprojection.get(alpos)).get(0);
                         res.insert(a, new InsertBefore(refelement, added));
                         added = new ArrayList<SElementOrConflict<?>>();
@@ -455,8 +455,8 @@ public class STool implements SToolInterface {
                             res.insertAll(diffElements(atuple.get(j), btuple.get(j), a));
                         }
                     } else res.insertAll(diffElements(
-                            (ISElement<?>) alprojection.get(alpos),
-                            (ISElement<?>) d.getValue(), a));
+                            (SElement<?>) alprojection.get(alpos),
+                            (SElement<?>) d.getValue(), a));
                     alpos = alpos + 1;
                     break;
             }
@@ -468,10 +468,10 @@ public class STool implements SToolInterface {
 
     /** The (improved) Diff3 Algorithm, which can also be used for merging simply. */
 
-    public SEditScript merge(ISElement<?> a, ISElement<?> b) {
+    public SEditScript merge(SElement<?> a, SElement<?> b) {
         similaritycache.reset();
         double sim = similarity(a, b);
-        ISElement<?> o = null;
+        SElement<?> o = null;
 
         if (sim > 0.0) {
             limit = null;
@@ -493,7 +493,7 @@ public class STool implements SToolInterface {
         }
     }
 
-    public SEditScript sdiff3(ISElement<?> o, ISElement<?> a, ISElement<?> b) {
+    public SEditScript sdiff3(SElement<?> o, SElement<?> a, SElement<?> b) {
         similaritycache.reset();
         double sim = similarity(a, b);
         double simOA = similarity(o, a);
@@ -540,20 +540,20 @@ public class STool implements SToolInterface {
             type = SConflictTypes.set;
         else if (c instanceof MostSimilarSubsequenceMapping.UpdateDeleteConflictEntry)
             type = SConflictTypes.updatedelete;
-        List<ISElement<?>> leftelements = new ArrayList<ISElement<?>>();
+        List<SElement<?>> leftelements = new ArrayList<SElement<?>>();
         for (SElementOrTuple<?> x : c.getLeftvalues()) {
             if (x instanceof SElementTuple) leftelements.addAll(((SElementTuple<?>) x));
-            else leftelements.add(((ISElement<?>) x));
+            else leftelements.add(((SElement<?>) x));
         }
-        List<ISElement<?>> rightelements = new ArrayList<ISElement<?>>();
+        List<SElement<?>> rightelements = new ArrayList<SElement<?>>();
         for (SElementOrTuple<?> x : c.getRightvalues()) {
             if (x instanceof SElementTuple) leftelements.addAll(((SElementTuple<?>) x));
-            else leftelements.add(((ISElement<?>) x));
+            else leftelements.add(((SElement<?>) x));
         }
         return new SElementConflict(type, leftelements, rightelements);
     }
 
-    private SEditScript diff3Annotations(ISElement<?> o, ISElement<?> a, ISElement<?> b) {
+    private SEditScript diff3Annotations(SElement<?> o, SElement<?> a, SElement<?> b) {
         List<SAnnotation<?>> ol = (o == null) ? new ArrayList<SAnnotation<?>>(0) : o.getAnnotations();
         List<SAnnotation<?>> al = a.getAnnotations();
         List<SAnnotation<?>> bl = b.getAnnotations();
@@ -577,7 +577,7 @@ public class STool implements SToolInterface {
                 case UPDATE:
                     //System.out.println("ANNOT UPDATE " + d);
                     SAnnotation annot = null;
-                    if (o != null) annot = o.getAnnotation(d.getValue().getNameSpace(), d.getValue().getName());
+                    if (o != null) annot = o.getAnnotation(d.getValue().namespace(), d.getValue().name());
                     if (d.getTwovalues()) {
                         // Conflict
                         res.insert(o, new UpdateAnnotation(o, annot, new SAnnotationConflict(SConflictTypes.set, Collectionxx.newList(d.getValue()), Collectionxx.newList(d.getOthervalue()))));
@@ -598,7 +598,7 @@ public class STool implements SToolInterface {
         return res;
     }
 
-    private SEditScript diff3Elements(ISElement<?> o, ISElement<?> a, ISElement<?> b, ISElement<?> parent) {
+    private SEditScript diff3Elements(SElement<?> o, SElement<?> a, SElement<?> b, SElement<?> parent) {
         //System.out.println(String.format("Diff3: %s : %s vs %s",o,a,b));
         if (similarity(a, b) == 0.0) {
             SEditScript res = new SEditScript();
@@ -614,14 +614,14 @@ public class STool implements SToolInterface {
             // TODO: Add limits
             //System.out.println(String.format("Similarity %s: %s vs %s ",similarity(a,b),a,b));
             SEditScript res = diff3Annotations(o, a, b);
-            List<ISElement<?>> ol = (o == null) ? new ArrayList<ISElement<?>>(0) : o.getChildren();
-            List<ISElement<?>> al = a.getChildren();
-            List<ISElement<?>> bl = b.getChildren();
+            List<SElement<?>> ol = (o == null) ? new ArrayList<SElement<?>>(0) : o.getChildren();
+            List<SElement<?>> al = a.getChildren();
+            List<SElement<?>> bl = b.getChildren();
 
-            for (List<ISElement<?>> xl : new List[]{ol, al, bl}) {
-                for (ISElement<?> s : xl)
+            for (List<SElement<?>> xl : new List[]{ol, al, bl}) {
+                for (SElement<?> s : xl)
                     if (s.getSimilaritySpec() == null) {
-                        s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.getNamespace(), s.getLabel()).get(0));
+                        s.setSimilaritySpec(spec.getElementSimilaritySpecs(s.namespace(), s.getLabel()).get(0));
                     }
             }
 
@@ -718,12 +718,12 @@ public class STool implements SToolInterface {
         }
     }
 
-    private void diff3InsertDiffsAndRecurse(ISElement<?> o,
+    private void diff3InsertDiffsAndRecurse(SElement<?> o,
                                             List<SElementOrTuple<?>> olprojection, List<SElementOrTuple<?>> alprojection, List<SElementOrTuple<?>> blprojection,
                                             List<MostSimilarSubsequenceMapping.DiffEntry<SElementOrTuple<?>>> diff,
                                             SEditScript res) {
         ArrayList<SElementOrConflict<?>> added = new ArrayList<SElementOrConflict<?>>();
-        ArrayList<ISElement<?>> deleted = new ArrayList<ISElement<?>>();
+        ArrayList<SElement<?>> deleted = new ArrayList<SElement<?>>();
 
         Integer olpos = 0;
         for (int i = 0; i < diff.size(); i++) {
@@ -739,41 +739,41 @@ public class STool implements SToolInterface {
                             SElementTuple<?> atuple = (SElementTuple<?>) d.getValue();
                             SElementTuple<?> btuple = (SElementTuple<?>) d.getOthervalue();
                             for (int j = 0; j < btuple.size(); j++) {
-                                ISElement<?> acopy = atuple.get(j).copy();
+                                SElement<?> acopy = atuple.get(j).copy();
                                 acopy.setEditScript(
                                     diff3Elements(acopy, atuple.get(j), btuple.get(j), o));
                                 added.add(acopy);
                                 }
                         } else {
-                            ISElement<?> acopy = ((ISElement<?>) d.getValue()).copy();
+                            SElement<?> acopy = ((SElement<?>) d.getValue()).copy();
                             acopy.setEditScript(diff3Elements(
                                 acopy,
-                                (ISElement<?>) d.getValue(),
-                                (ISElement<?>) d.getOthervalue(),
+                                (SElement<?>) d.getValue(),
+                                (SElement<?>) d.getOthervalue(),
                                 o));
                             added.add(acopy);
                         }
                     } else {
                         if (d.getValue() instanceof SElementTuple<?>) {
                             added.addAll(((SElementTuple<?>) d.getValue()));
-                        } else added.add((ISElement<?>) d.getValue());
+                        } else added.add((SElement<?>) d.getValue());
                     }
                     break;
                 case REMOVE:
                     if (d.getValue() instanceof SElementTuple<?>) {
-                        for (ISElement<?> e : ((SElementTuple<?>) d.getValue())) {
+                        for (SElement<?> e : ((SElementTuple<?>) d.getValue())) {
                             deleted.add(e);
                         }
-                    } else deleted.add((ISElement<?>) d.getValue());
+                    } else deleted.add((SElement<?>) d.getValue());
                     olpos = olpos + 1;
                     break;
                 case NONE:
                     break;
                 case CONFLICT:
                     if (!added.isEmpty()) {
-                        ISElement refelement;
-                        if (olprojection.get(olpos) instanceof ISElement<?>)
-                            refelement = (ISElement<?>) olprojection.get(olpos);
+                        SElement refelement;
+                        if (olprojection.get(olpos) instanceof SElement<?>)
+                            refelement = (SElement<?>) olprojection.get(olpos);
                         else refelement = ((SElementTuple<?>) olprojection.get(olpos)).get(0);
                         //System.out.println(String.format("Insert before %s : %s",refelement,added));
                         res.insert(o, new InsertBefore(refelement, added));
@@ -782,19 +782,19 @@ public class STool implements SToolInterface {
                     MostSimilarSubsequenceMapping.ConflictEntry<SElementOrTuple<?>> ce =
                             (MostSimilarSubsequenceMapping.ConflictEntry<SElementOrTuple<?>>) d;
 
-                    //deleted.add((ISElement) olprojection.get(olpos));
+                    //deleted.add((SElement) olprojection.get(olpos));
                     //added.add(toSElementConflict(ce));
 
                     res.insert(o,
-                            new ReplaceElement(o,(ISElement<?>) olprojection.get(olpos),
+                            new ReplaceElement(o,(SElement<?>) olprojection.get(olpos),
                                     toSElementConflict(ce)));
                     olpos = olpos + 1;
                     break;
                 case UPDATE:
                     if (!added.isEmpty()) {
-                        ISElement<?> refelement;
-                        if (olprojection.get(olpos) instanceof ISElement)
-                            refelement = (ISElement<?>) olprojection.get(olpos);
+                        SElement<?> refelement;
+                        if (olprojection.get(olpos) instanceof SElement)
+                            refelement = (SElement<?>) olprojection.get(olpos);
                         else refelement = ((SElementTuple<?>) olprojection.get(olpos)).get(0);
                         //System.out.println(String.format("Insert before %s : %s",refelement,added));
                         res.insert(o, new InsertBefore(refelement, added));
@@ -811,9 +811,9 @@ public class STool implements SToolInterface {
                                 res.insertAll(diff3Elements(otuple.get(j), atuple.get(j), btuple.get(j), o));
                             }
                         } else res.insertAll(diff3Elements(
-                                (ISElement<?>) olprojection.get(olpos),
-                                (ISElement<?>) d.getValue(),
-                                (ISElement<?>) d.getOthervalue(),
+                                (SElement<?>) olprojection.get(olpos),
+                                (SElement<?>) d.getValue(),
+                                (SElement<?>) d.getOthervalue(),
                                 o));
                     } else {
                         //Debug.println("d.getType() = "+d.getType());
@@ -824,8 +824,8 @@ public class STool implements SToolInterface {
                                 res.insertAll(diffElements(otuple.get(j), tuple.get(j), o));
                             }
                         } else res.insertAll(diffElements(
-                                (ISElement<?>) olprojection.get(olpos),
-                                (ISElement<?>) d.getValue(), o));
+                                (SElement<?>) olprojection.get(olpos),
+                                (SElement<?>) d.getValue(), o));
                     }
                     olpos = olpos + 1;
                     break;

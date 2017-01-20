@@ -6,34 +6,24 @@ import de.dfki.cps.stools.similarityspec.ElementSimilaritySpec
 
 import scala.beans.BeanProperty
 
-class SAtomicString(
-    line: String, 
-    @BeanProperty var equivSpec: String, 
-    @BeanProperty val parent: ISElement[_]) extends SElement[String] {      
+class SAtomicString(val underlying: String,
+    equivSpecValue: String = null,
+    val parent: SElement[_] = null) extends SElement[String] {
+  this.equivSpec = equivSpecValue
+
   override def copy() = {
     val c = new SAtomicString("",equivSpec,null)
     c.setSimilaritySpec(similaritySpec)
     c;
   }
-  
-  override def getObject() = line
+
+  def line = underlying
 
   override def toString() = s"[AString '$line']"
   
-  override def getChildren() = new ArrayList[ISElement[_]]
-
+  val children = Nil
+  val label = line
+  val namespace = ""
+  val annotations = Nil
   override def getType() = "<TEXT>"
-
-  override def getNamespace() = ""
-
-  override def getLabel() = line
-
-  override def getAnnotations = new ArrayList[SAnnotation[_]]
-
-  override def hasAnnotation(namespace: String, name: String) = false
-
-  override def getAnnotation(namespace: String, name: String) = null
- 
-  @BeanProperty
-  var similaritySpec: ElementSimilaritySpec = null
 }

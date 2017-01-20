@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SElementTuple;
 import de.dfki.cps.utils.Collectionxx;
 
@@ -70,7 +70,7 @@ public class ElementTupleSpec extends ElementNameOrTupleSpec {
         return res;
     }
 
-    public List<SElementTuple<?>> eval(List<ISElement<?>> al) {
+    public List<SElementTuple<?>> eval(List<SElement<?>> al) {
         ArrayList<SElementTuple<?>> res = new ArrayList<SElementTuple<?>>();
         res = new ArrayList<SElementTuple<?>>();
         for (int i = 0; i < al.size(); i++) {
@@ -80,13 +80,13 @@ public class ElementTupleSpec extends ElementNameOrTupleSpec {
         return res;
     }
 
-    public SElementTuple<?> match(List<ISElement<?>> l, int from) {
+    public SElementTuple<?> match(List<SElement<?>> l, int from) {
         if (l.size() > from + namespecs.size()) {
             SElementTuple<?> t = new SElementTuple();
             for (int i = 0; i < namespecs.size(); i++) {
-                ISElement<?> se = l.get(from + i);
+                SElement<?> se = l.get(from + i);
                 ElementNameSpec ens = namespecs.get(i);
-                if (se.getNamespace().equals(ens.getNamespace()) &&
+                if (se.namespace().equals(ens.getNamespace()) &&
                         se.getType().equals(ens.getName())) {
                     t.add(se);
                 } else return null;

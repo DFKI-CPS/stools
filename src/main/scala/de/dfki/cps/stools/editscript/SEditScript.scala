@@ -1,6 +1,6 @@
 package de.dfki.cps.stools.editscript
 
-import de.dfki.cps.stools.ISElement
+import de.dfki.cps.stools.SElement
 
 import scala.collection.mutable._
 
@@ -9,8 +9,8 @@ object SEditScript {
     var updateAnnotations = Buffer.empty[UpdateAnnotation]
     var appendAnnotations = Option.empty[AppendAnnotations]
     var appendElements = Option.empty[AppendElements]
-    var insertAfter = Map.empty[ISElement[_],InsertAfter]
-    var insertBefore = Map.empty[ISElement[_],InsertBefore]
+    var insertAfter = Map.empty[SElement[_],InsertAfter]
+    var insertBefore = Map.empty[SElement[_],InsertBefore]
     var removeAnnotations = Option.empty[RemoveAnnotations]
     var removeElements = Option.empty[RemoveElements]
     var replaceElements = Buffer.empty[ReplaceElement]
@@ -26,7 +26,7 @@ object SEditScript {
 }
 
 class SEditScript {
-  val entries = collection.mutable.Map.empty[ISElement[_], SEditScript.SEditScriptEntry]
+  val entries = collection.mutable.Map.empty[SElement[_], SEditScript.SEditScriptEntry]
   
   def isEmpty = entries.isEmpty
   
@@ -34,7 +34,7 @@ class SEditScript {
     entries.map { case (e,v) => s"*$e:\n  $v" }
            .mkString("{\n","\n","\n}")
   
-  def getEntries(e: ISElement[_]) =
+  def getEntries(e: SElement[_]) =
     entries.getOrElseUpdate(e, new SEditScript.SEditScriptEntry())
   
   def insertAll(es: SEditScript) {
@@ -50,43 +50,43 @@ class SEditScript {
     }
   }
 
-  def insert(e: ISElement[_], c: AppendAnnotations) = {    
+  def insert(e: SElement[_], c: AppendAnnotations) = {    
     val entry = getEntries(e)
     if (entry.appendAnnotations == None) entry.appendAnnotations = Some(c)
     else entry.appendAnnotations.get.getAnnotations.addAll(c.getAnnotations)
   }
 
-  def insert(e: ISElement[_], c: RemoveAnnotations) = {
+  def insert(e: SElement[_], c: RemoveAnnotations) = {
     val entry = getEntries(e)
     if (entry.removeAnnotations == None) entry.removeAnnotations = Some(c)
     else entry.removeAnnotations.get.a.addAll(c.a)
   }
     
-  def insert(e: ISElement[_], c: AppendElements) = {
+  def insert(e: SElement[_], c: AppendElements) = {
     val entry = getEntries(e)
     if (entry.appendElements == None) entry.appendElements = Some(c)
     else entry.appendElements.get.elements.addAll(c.elements)
   }
 
-  def insert(e: ISElement[_], c: RemoveElements) = {    
+  def insert(e: SElement[_], c: RemoveElements) = {    
     val entry = getEntries(e);
     if (entry.removeElements == None) entry.removeElements = Some(c);
     else entry.removeElements.get.el.addAll(c.el);
     // Debug.println("Adding "+c);
   }
 
-  def insert(e: ISElement[_], c: Buffer[ReplaceElement]) {
+  def insert(e: SElement[_], c: Buffer[ReplaceElement]) {
     val entry = getEntries(e);
     if (entry.replaceElements == null) entry.replaceElements = c;
     else entry.replaceElements.appendAll(c);
   }    
 
-  def insert(e: ISElement[_], c: UpdateAnnotation) {
+  def insert(e: SElement[_], c: UpdateAnnotation) {
     val entry = getEntries(e);
     entry.updateAnnotations.append(c)
   }    
   
-  def insert(e: ISElement[_], c: InsertAfter) {     
+  def insert(e: SElement[_], c: InsertAfter) {     
     val entry = getEntries(e);
     if (entry.insertAfter.contains(c.ref)) {
         entry.insertAfter(c.ref).elements.addAll(c.elements);
@@ -95,7 +95,7 @@ class SEditScript {
     }
   }
 
-  def insert(e: ISElement[_], c: InsertBefore) {      
+  def insert(e: SElement[_], c: InsertBefore) {      
     val entry = getEntries(e);
     if (entry.insertBefore.contains(c.ref)) {
         entry.insertBefore(c.ref).elements.addAll(c.elements);
@@ -105,7 +105,7 @@ class SEditScript {
     // Debug.println("Adding "+c);
   }
 
-  def insert(e: ISElement[_], c: ReplaceElement) {
+  def insert(e: SElement[_], c: ReplaceElement) {
     val entry = getEntries(e);
     entry.replaceElements.append(c)
   }

@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.utils.Collectionxx;
 
 import java.util.ArrayList;
@@ -34,9 +34,9 @@ public class AllButElementSpec extends ElementSpec {
         }
     }
 
-    private Boolean isExcluded(ISElement se) {
+    private Boolean isExcluded(SElement se) {
         for (ElementNameSpec ans : entries) {
-            if (ans.getNamespace().equals(se.getNamespace()) &&
+            if (ans.getNamespace().equals(se.namespace()) &&
                     ans.getName().equals(se.getType())) {
                 return true;
             }
@@ -44,14 +44,14 @@ public class AllButElementSpec extends ElementSpec {
         return false;
     }
 
-    public List<ElementNameSpec> eval(List<ISElement<?>> e, String equivspec, SimilaritySpec sspec) {
+    public List<ElementNameSpec> eval(List<SElement<?>> e, String equivspec, SimilaritySpec sspec) {
         ArrayList<ElementNameSpec> res = new ArrayList<ElementNameSpec>();
-        for (ISElement<?> se : e) {
+        for (SElement<?> se : e) {
             if (!isExcluded(se)) {
                 //System.err.println(String.format("Eval %s equiv %s sspec %s",se,equivspec,sspec));
                 //System.err.println("Adding eval "+new ElementNameSpec(se.getNamespace(), se.getType(), equivspec, sspec));
                 res.add(
-                        new ElementNameSpec(se.getNamespace(), se.getType(), equivspec, sspec));
+                        new ElementNameSpec(se.namespace(), se.getType(), equivspec, sspec));
             }
         }
         return res;

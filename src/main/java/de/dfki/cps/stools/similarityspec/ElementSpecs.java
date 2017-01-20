@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools.similarityspec;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SElementOrTuple;
 import de.dfki.cps.stools.SElementTuple;
 
@@ -61,7 +61,7 @@ public class ElementSpecs extends ArrayList<ElementSpec> {
         for (ElementNameSpec as : asl) insert(as);
     }
 
-    public Map<ElementSpec,List<SElementOrTuple<?>>> projection(List<ISElement<?>> l) {
+    public Map<ElementSpec,List<SElementOrTuple<?>>> projection(List<SElement<?>> l) {
         Map<ElementSpec,List<SElementOrTuple<?>>> result = new HashMap<ElementSpec, List<SElementOrTuple<?>>>();
         Iterator<ElementSpec> it = this.iterator();
         while (it.hasNext()) result.put(it.next(),new ArrayList<SElementOrTuple<?>>());
@@ -73,7 +73,7 @@ public class ElementSpecs extends ArrayList<ElementSpec> {
                 ElementSpec s = it.next();
                 if (s instanceof ElementNameSpec) {
                     ElementNameSpec e = (ElementNameSpec) s;
-                    ISElement<?> t = e.match(l, i);
+                    SElement<?> t = e.match(l, i);
                     if (t != null) {
                         //System.out.println(String.format("%s matches %s",e,l.get(i)));
                         result.get(s).add(t);
@@ -98,7 +98,7 @@ public class ElementSpecs extends ArrayList<ElementSpec> {
         return result;
     }
     
-    public Boolean match(ISElement<?> se, Boolean adjustequivspec) {
+    public Boolean match(SElement<?> se, Boolean adjustequivspec) {
 
     Iterator<ElementSpec> it = this.iterator();
         Boolean matched = false;
@@ -106,7 +106,7 @@ public class ElementSpecs extends ArrayList<ElementSpec> {
             ElementSpec s = it.next();
             if (s instanceof ElementNameSpec) {
                 ElementNameSpec e = (ElementNameSpec) s;
-                ISElement<?> t = e.match(se,adjustequivspec);
+                SElement<?> t = e.match(se,adjustequivspec);
                 if (t != null) {
                     matched = true;
                 }

@@ -5,21 +5,21 @@ import scala.beans.BeanProperty
 sealed trait SAnnotationOrConflict[T]
 
 trait SAnnotation[T] extends SAnnotationOrConflict[T] {
-  def getObject(): T
-  def getName(): String
-  def getValue(): String
-  def getNameSpace(): String
-  def getParent(): ISElement[_]
+  def underlying: T
+  def name: String
+  def value: String
+  def namespace: String
+  def parent: SElement[_]
 }
 
 case class SAnnotationConflict[T](
-    @BeanProperty `type`: SConflictTypes,
+    @BeanProperty conflictType: SConflictTypes,
     @BeanProperty left: java.util.List[SAnnotation[_]],
     @BeanProperty right: java.util.List[SAnnotation[_]]) extends SAnnotationOrConflict[T] {
   override def toString() = {
     val form = 
-      if (getType == SConflictTypes.list) "C(%s|%s)"
-      else if (getType == SConflictTypes.updatedelete) "C<%s|%s>"
+      if (conflictType == SConflictTypes.list) "C(%s|%s)"
+      else if (conflictType == SConflictTypes.updatedelete) "C<%s|%s>"
       else "C{%s|%s}"
     String.format(form,getLeft,getRight)
   }

@@ -17,14 +17,14 @@ import scala.collection.JavaConverters._
  */
 trait SElementOrTuple[T]
 
-class SElementTuple[T] extends ArrayList[ISElement[_]] with SElementOrTuple[T] {
+class SElementTuple[T] extends ArrayList[SElement[_]] with SElementOrTuple[T] {
   implicit class CollectionImplicits[T](collection: java.util.Collection[T]) {
     def forEach(f: T => Unit) = ???
   }
 
   def contains(ens: ElementNameSpec): Boolean = {
     for (e <- this.asScala) {
-      if ((e.getNamespace == ens.getNamespace) && (e.getType == ens.getName)) return true
+      if ((e.namespace == ens.getNamespace) && (e.getType == ens.getName)) return true
     }
     false
   }
@@ -35,9 +35,9 @@ class SElementTuple[T] extends ArrayList[ISElement[_]] with SElementOrTuple[T] {
         var i: Int = 0
         while (i < size) {
           {
-            val te: ISElement[_] = get(i)
-            val oe: ISElement[_] = o.get(i)
-            if (!((te.getNamespace == oe.getNamespace) && (te.getType == oe.getType))) return false
+            val te: SElement[_] = get(i)
+            val oe: SElement[_] = o.get(i)
+            if (!((te.namespace == oe.namespace) && (te.getType == oe.getType))) return false
           }
           i += 1; i - 1
         }
@@ -53,8 +53,8 @@ class SElementTuple[T] extends ArrayList[ISElement[_]] with SElementOrTuple[T] {
         var i: Int = 0
         while (i < size) {
           {
-            val te: ISElement[_] = get(i)
-            val oe: ISElement[_] = o.get(i)
+            val te: SElement[_] = get(i)
+            val oe: SElement[_] = o.get(i)
             if (!(te == oe)) return false
           }
           i += 1; i - 1

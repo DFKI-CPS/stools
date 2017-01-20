@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools.similarityspec;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 
 import javax.xml.XMLConstants;
 import java.util.ArrayList;
@@ -43,19 +43,19 @@ public class ElementNameSpec extends ElementNameOrTupleSpec {
         return equivspec;
     }
 
-    public List<ISElement<?>> eval(List<ISElement<?>> al) {
-        ArrayList<ISElement<?>> res = new ArrayList<ISElement<?>>();
+    public List<SElement<?>> eval(List<SElement<?>> al) {
+        ArrayList<SElement<?>> res = new ArrayList<SElement<?>>();
         for (int i = 0; i < al.size(); i++) {
-            ISElement<?> e = match(al, i);
+            SElement<?> e = match(al, i);
             if (e != null) res.add(e);
         }
         return res;
     }
 
 
-    public ISElement<?> match(List<ISElement<?>> al, int pos) {
-        ISElement<?> e = al.get(pos);
-        if (e.getNamespace().equals(getNamespace()) &&
+    public SElement<?> match(List<SElement<?>> al, int pos) {
+        SElement<?> e = al.get(pos);
+        if (e.namespace().equals(getNamespace()) &&
                 e.getType().equals(getName())) {
             // Ajdusting the specific equivspec names for the recursion
 
@@ -68,8 +68,8 @@ public class ElementNameSpec extends ElementNameOrTupleSpec {
     }
 
 
-    public ISElement<?> match(ISElement<?> e, Boolean adjustequivspec) {
-        if (e.getNamespace().equals(getNamespace()) &&
+    public SElement<?> match(SElement<?> e, Boolean adjustequivspec) {
+        if (e.namespace().equals(getNamespace()) &&
                 e.getType().equals(getName())) {
             // Ajdusting the specific equivspec names for the recursion
             if (adjustequivspec && !equivspec.isEmpty()) {

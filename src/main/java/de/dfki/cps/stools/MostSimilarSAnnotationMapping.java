@@ -68,18 +68,18 @@ public class MostSimilarSAnnotationMapping extends MostSimilarSubsetMapping<SAnn
 
     @Override
     protected double similarity(SAnnotation x1, SAnnotation y1) {
-        if (x1.getNameSpace().equals(y1.getNameSpace())
-                && x1.getName().equals(y1.getName())
-                && x1.getValue().equals(y1.getValue())) return 1.0;
+        if (x1.namespace().equals(y1.namespace())
+                && x1.name().equals(y1.name())
+                && x1.value().equals(y1.value())) return 1.0;
         else return 0.0;
     }
 
 
     @Override
     protected Boolean equals(SAnnotation x1, SAnnotation y1) {
-        return (x1.getNameSpace().equals(y1.getNameSpace()) &&
-                x1.getName().equals(y1.getName()) &&
-                x1.getValue().equals(y1.getValue()));
+        return (x1.namespace().equals(y1.namespace()) &&
+                x1.name().equals(y1.name()) &&
+                x1.value().equals(y1.value()));
     }
 
 }

@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SAnnotation;
 import de.dfki.cps.utils.Collectionxx;
 import de.dfki.cps.utils.Test;
@@ -96,7 +96,7 @@ public class AnnotationSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         return res;
     }
 
-    public AnnotationSimilaritySpec expand(ISElement a, ISElement b, SimilaritySpec spec) {
+    public AnnotationSimilaritySpec expand(SElement a, SElement b, SimilaritySpec spec) {
         AnnotationSpecs newabsent = new AnnotationSpecs();
         for (AnnotationSpec as : absent) {
             if (as instanceof AnnotationNameSpec) {
@@ -127,7 +127,7 @@ public class AnnotationSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         return new AnnotationSimilaritySpec(newcheckannotations, newmandatory, newabsent);
     }
 
-    public List<SAnnotation<?>> select(ISElement<?> a) {
+    public List<SAnnotation<?>> select(SElement<?> a) {
         ArrayList<SAnnotation<?>> res = new ArrayList<SAnnotation<?>>();
         for (AnnotationSpec as : checkannotations) {
             if (as instanceof AnnotationNameSpec) {
@@ -145,8 +145,8 @@ public class AnnotationSimilaritySpec extends AnnotationOrSubElementSimilaritySp
                             public Boolean check(Object o) {
                                 AnnotationNameSpec orig = ((AnnotationNameSpec) this.base);
                                 SAnnotation<?> sa = (SAnnotation<?>) o;
-                                return (orig.getNameSpace().equals(sa.getNameSpace())
-                                        && orig.getName().equals(sa.getName()));
+                                return (orig.getNameSpace().equals(sa.namespace())
+                                        && orig.getName().equals(sa.name()));
                             }
                         }))
                     res.add((SAnnotation<?>) a.getAnnotation(ans.getNameSpace(), ans.getName()));

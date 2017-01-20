@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SToolInterface;
 import de.dfki.cps.utils.MostSimilarSubsequenceMapping;
 
@@ -72,8 +72,8 @@ public class MostSimilarSElementOrTupleSubsequenceMapping extends MostSimilarSub
     protected double similarity(SElementOrTuple<?> x1, SElementOrTuple<?> y1) {
         if (x1 instanceof SElementTuple && y1 instanceof SElementTuple) {
             return similarity((SElementTuple<?>) x1, (SElementTuple<?>) y1);
-        } else if (x1 instanceof ISElement && y1 instanceof ISElement) {
-            return similarity((ISElement<?>) x1, (ISElement<?>) y1);
+        } else if (x1 instanceof SElement && y1 instanceof SElement) {
+            return similarity((SElement<?>) x1, (SElement<?>) y1);
         } else return 0.0;
     }
 
@@ -81,8 +81,8 @@ public class MostSimilarSElementOrTupleSubsequenceMapping extends MostSimilarSub
         if (x1.compatible(y1)) {
             double sim = 0.0;
             for (int i = 0; i < x1.size(); i++) {
-                ISElement<?> te = (ISElement<?>) x1.get(i);
-                ISElement<?> oe = (ISElement<?>) y1.get(i);
+                SElement<?> te = (SElement<?>) x1.get(i);
+                SElement<?> oe = (SElement<?>) y1.get(i);
                 SToolInterface s = manager.getSTool(te.getEquivSpec());
                 sim = s.similarity(te, oe) + sim;
             }
@@ -90,14 +90,14 @@ public class MostSimilarSElementOrTupleSubsequenceMapping extends MostSimilarSub
         } else return 0.0;
     }
 
-    protected double similarity(ISElement<?> x1, ISElement<?> y1) {
+    protected double similarity(SElement<?> x1, SElement<?> y1) {
         //System.err.println("x1 = "+x1+"\nEuivspec = "+x1.getEquivspec()+"\nstool = "+manager.getSTool(x1.getEquivspec()));
         SToolInterface s = manager.getSTool(x1.getEquivSpec());
         //System.out.println(String.format("Similarity %s and %s = %s",x1,y1,s.similarity(x1,y1)));
         if (s==null) {
             System.err.println(String.format("Equivspec %s is undefined. Using default name-equivalence-only",
                     x1.getEquivSpec()));
-            if (x1.getNamespace().equals(y1.getNamespace()) &&
+            if (x1.namespace().equals(y1.namespace()) &&
                     x1.getType().equals(y1.getType()))
                 return 1.0;
             else return 0.0;

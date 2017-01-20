@@ -72,8 +72,8 @@ public class MostSimilarSElementOrTupleSubsetMapping extends MostSimilarSubsetMa
         protected double similarity(SElementOrTuple<?> x1, SElementOrTuple<?> y1) {
             if (x1 instanceof SElementTuple && y1 instanceof SElementTuple) {
                 return similarity((SElementTuple<?>) x1, (SElementTuple<?>) y1);
-            } else if (x1 instanceof ISElement && y1 instanceof ISElement) {
-                return similarity((ISElement<?>) x1, (ISElement<?>) y1);
+            } else if (x1 instanceof SElement && y1 instanceof SElement) {
+                return similarity((SElement<?>) x1, (SElement<?>) y1);
             } else return 0.0;
         }
 
@@ -81,8 +81,8 @@ public class MostSimilarSElementOrTupleSubsetMapping extends MostSimilarSubsetMa
             if (x1.compatible(y1)) {
                 double sim = 0.0;
                 for (int i = 0; i < x1.size(); i++) {
-                    ISElement<?> te = (ISElement<?>) x1.get(i);
-                    ISElement<?> oe = (ISElement<?>) y1.get(i);
+                    SElement<?> te = (SElement<?>) x1.get(i);
+                    SElement<?> oe = (SElement<?>) y1.get(i);
                     SToolInterface s = manager.getSTool(te.getEquivSpec());
                     sim = s.similarity(te, oe) + sim;
                 }
@@ -90,7 +90,7 @@ public class MostSimilarSElementOrTupleSubsetMapping extends MostSimilarSubsetMa
             } else return 0.0;
         }
 
-        protected double similarity(ISElement<?> x1, ISElement<?> y1) {
+        protected double similarity(SElement<?> x1, SElement<?> y1) {
             SToolInterface s = manager.getSTool(x1.getEquivSpec());
             if (s==null) {
                 System.err.println(String.format("SELement %s equivspec %s",x1,x1.getEquivSpec()));

@@ -11,7 +11,6 @@ import javax.xml.XMLConstants
 import de.dfki.cps.PersonalNamespaceContext
 import de.dfki.cps.stools.{SimilaritySpecLexer, SimilaritySpecParser}
 import de.dfki.cps.stools.SimilaritySpecLexer._
-import de.dfki.cps.utils.Stringxx
 import de.dfki.cps.stools.SimilaritySpecParser
 import de.dfki.cps.utils.Collectionxx
 import org.antlr.runtime.tree.Tree
@@ -241,12 +240,12 @@ class SimilaritySpec(private[similarityspec] var name: String = "", tree: Option
     es.size match {
       case 0 =>
       case 1 =>
-        res = res + "\n" + Stringxx.tabulate(es.get(0).toString, 4)
+        res = res + "\n" + es.get(0).toString.lines.map("    " + _).mkString("\n")
         res = res + "  "
       case _ =>
         res = res + "\n  alternatives {\n"
         for (e <- es.asScala) {
-          res = res + "  {\n" + Stringxx.tabulate(e.toString, 4)
+          res = res + "  {\n" + es.get(0).toString.lines.map("    " + _).mkString("\n")
           res = res + "  }\n"
         }
         res = res + "  }\n"

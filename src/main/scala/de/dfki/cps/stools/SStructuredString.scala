@@ -8,21 +8,29 @@ import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 
 class SStructuredString(
-    line: String, 
-    @BeanProperty var equivSpec: String,
-    @BeanProperty val parent: ISElement[String]) extends SElement[String] {        
-  override def copy() = {
+    val underlying: String,
+    equivSpecValue: String,
+    val parent: SElement[String]) extends SElement[String] {
+
+  this.equivSpec = equivSpecValue
+
+  val annotations = Nil
+  val children = computedChildren
+  val label = "<TEXT>"
+  val namespace = ""
+
+  def line = underlying
+
+  def copy() = {
     val c = new SStructuredString("",equivSpec,null)        
     c.setSimilaritySpec(similaritySpec)
     c
   }
 
-  override def getObject() = line
-
   override def toString() = s"[SString '$line']"
   
-  @BeanProperty lazy val children: java.util.List[ISElement[_]] = {
-    val cs: Array[ISElement[_]] = equivSpec match {  
+  lazy val computedChildren: Seq[SElement[_]] = {
+    val cs: Array[SElement[_]] = equivSpec match {
       case "wordlist" | "wordset" =>
         line.split(" ").flatMap(Array(_," ")).init.map(new SAtomicString(_,"word",this))
       case "charsetlist" | "charsetset" =>
@@ -36,21 +44,6 @@ class SStructuredString(
         Array()
     }
     cs.foreach(_.setEquivSpec(equivSpec))
-    cs.toList.asJava
+    cs
   }
-
-  override def getType = "<TEXT>"
-
-  override def getNamespace = ""
-
-  override def getLabel = getType
-
-  override def getAnnotations = new ArrayList[SAnnotation[_]]
-  
-  override def hasAnnotation(namespace: String, name: String) = false
-
-  override def getAnnotation(namespace: String, name: String) = null
- 
-  @BeanProperty
-  var similaritySpec: ElementSimilaritySpec = null
 }

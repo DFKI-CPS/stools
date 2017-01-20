@@ -4,7 +4,7 @@
 
 package de.dfki.cps.stools;
 
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.stools.SToolInterface;
 import de.dfki.cps.utils.MostSimilarSubsetMapping;
 
@@ -74,8 +74,8 @@ public class MostSimilarSElementTupleSubsetMapping extends MostSimilarSubsetMapp
             if (x1.compatible(y1)) {
                 double sim = 0.0;
                 for (int i = 0; i < x1.size(); i++) {
-                    ISElement<?> te = (ISElement<?>) x1.get(i);
-                    ISElement<?> oe = (ISElement<?>) y1.get(i);
+                    SElement<?> te = (SElement<?>) x1.get(i);
+                    SElement<?> oe = (SElement<?>) y1.get(i);
                     SToolInterface s = manager.getSTool(te.getEquivSpec());
                     sim = s.similarity(te, oe) + sim;
                 }
@@ -83,7 +83,7 @@ public class MostSimilarSElementTupleSubsetMapping extends MostSimilarSubsetMapp
             } else return 0.0;
         }
 
-        protected double similarity(ISElement<?> x1, ISElement<?> y1) {
+        protected double similarity(SElement<?> x1, SElement<?> y1) {
             SToolInterface s = manager.getSTool(x1.getEquivSpec());
             if (s==null) {
                 System.err.println(String.format("SELement %s equivspec %s",x1,x1.getEquivSpec()));

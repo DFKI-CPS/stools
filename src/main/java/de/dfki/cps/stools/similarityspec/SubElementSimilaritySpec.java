@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import de.dfki.cps.utils.Collectionxx;
 
 import java.util.ArrayList;
@@ -214,7 +214,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         return res;
     }
 
-    public SubElementSimilaritySpec expand(String equivspec, SimilaritySpec spec, List<ISElement<?>>... lists) {
+    public SubElementSimilaritySpec expand(String equivspec, SimilaritySpec spec, List<SElement<?>>... lists) {
         // Absent
         ElementSpecs newabsent = new ElementSpecs();
         for (ElementSpec es : absent) {
@@ -223,7 +223,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         for (ElementSpec es : absent) {
             if (es instanceof AllButElementSpec) {
                 AllButElementSpec abes = (AllButElementSpec) es;
-                for(List<ISElement<?>> al:lists) {
+                for(List<SElement<?>> al:lists) {
                     newabsent.insertAll(abes.eval(al, equivspec, spec));
                 }
             }
@@ -236,7 +236,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         for (ElementSpec es : mandatory) {
             if (es instanceof AllButElementSpec) {
                 AllButElementSpec abes = (AllButElementSpec) es;
-                for(List<ISElement<?>> al:lists) {
+                for(List<SElement<?>> al:lists) {
                     newmandatory.insertAll(abes.eval(al, equivspec, spec));
                 }
             }
@@ -257,7 +257,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         for (ElementSpec es : ordered) {
             if (es instanceof AllButElementSpec) {
                 AllButElementSpec abes = (AllButElementSpec) es;
-                for(List<ISElement<?>> al:lists) {
+                for(List<SElement<?>> al:lists) {
                     List<ElementNameSpec> temp = abes.eval(al, equivspec, spec);
                     newordered.insertAll(temp);
                     collectors.addAll(temp);
@@ -280,7 +280,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         for (ElementSpec es : unordered) {
             if (es instanceof AllButElementSpec) {
                 AllButElementSpec abes = (AllButElementSpec) es;
-                for(List<ISElement<?>> al:lists) {
+                for(List<SElement<?>> al:lists) {
                     List<ElementNameSpec> temp = abes.eval(al, equivspec, spec);
                     newunordered.insertAll(temp);
                     collectors.addAll(temp);
@@ -295,7 +295,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
 
         AllButElementSpec abesa = new AllButElementSpec(collectors);
 
-        for(List<ISElement<?>> al:lists) {
+        for(List<SElement<?>> al:lists) {
             List<ElementNameSpec> tempa = abesa.eval(al, equivspec, spec);
             //System.err.println("tempa = "+tempa);
             newo.insertAll(tempa);
@@ -311,7 +311,7 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
         for (ElementSpec es : limit) {
             if (es instanceof AllButElementSpec) {
                 AllButElementSpec abes = (AllButElementSpec) es;
-                for(List<ISElement<?>> al:lists) {
+                for(List<SElement<?>> al:lists) {
                     List<ElementNameSpec> temp = abes.eval(al, equivspec, spec);
                     newlimit.insertAll(temp);
                 }
@@ -321,12 +321,12 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
                 newabsent, newlimit);
     }
 
-    public void setSubElementEquivSpec(ISElement e, String parentequivspec) {
+    public void setSubElementEquivSpec(SElement e, String parentequivspec) {
         // If we come here, then we have'nt found it in one the lists and we assign the parent's equivspec
         e.setEquivSpec(getSubElementEquivSpec(e, parentequivspec));
     }
 
-    public String getSubElementEquivSpec(ISElement e, String parentequivspec) {
+    public String getSubElementEquivSpec(SElement e, String parentequivspec) {
         String result = null;
 
         Iterator<ElementSpec> it = Collectionxx.append(ordered, unordered).iterator();
@@ -336,14 +336,14 @@ public class SubElementSimilaritySpec extends AnnotationOrSubElementSimilaritySp
                 ElementSpec es = it.next();
                 if (es instanceof ElementNameSpec) {
                     ElementNameSpec ens = (ElementNameSpec) es;
-                    if (ens.getNamespace().equals(e.getNamespace()) &&
+                    if (ens.getNamespace().equals(e.namespace()) &&
                             ens.getName().equals(e.getType())) {
                         if (!ens.getEquivSpec().isEmpty()) result = ens.getEquivSpec();
                         else result = parentequivspec;
                     }
                 } else if (es instanceof ElementTupleSpec) {
                     for (ElementNameSpec ens : ((ElementTupleSpec) es).namespecs) {
-                        if (ens.getNamespace().equals(e.getNamespace()) &&
+                        if (ens.getNamespace().equals(e.namespace()) &&
                                 ens.getName().equals(e.getType())) {
                             if (!ens.getEquivSpec().isEmpty()) result = ens.getEquivSpec();
                             else result = parentequivspec;

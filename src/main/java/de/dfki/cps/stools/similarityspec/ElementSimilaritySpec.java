@@ -5,7 +5,7 @@
 package de.dfki.cps.stools.similarityspec;
 
 import org.antlr.runtime.tree.Tree;
-import de.dfki.cps.stools.ISElement;
+import de.dfki.cps.stools.SElement;
 import scala.Tuple2;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class ElementSimilaritySpec {
         return new Tuple2<AnnotationSimilaritySpec, SubElementSimilaritySpec>(aspecs,especs);
     }
 
-    public String getSubElementEquivSpec (ISElement e, String parentequivspec) {
+    public String getSubElementEquivSpec (SElement e, String parentequivspec) {
         return subelementSimSpec.getSubElementEquivSpec(e,parentequivspec);
     }
 
