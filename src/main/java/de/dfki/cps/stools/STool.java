@@ -486,7 +486,7 @@ public class STool implements SToolInterface {
             script.insert(null,
                     new ReplaceElement(null, o,
                             new SElementConflict(
-                                    SConflictTypes.list,
+                                    SConflictType.List$.MODULE$,
                                     Collectionxx.newList(a),
                                     Collectionxx.newList(b))));
             return null;
@@ -514,7 +514,7 @@ public class STool implements SToolInterface {
             SEditScript script = new SEditScript();
             script.insert(null, new ReplaceElement(null, o,
                     new SElementConflict(
-                            SConflictTypes.list,
+                            SConflictType.List$.MODULE$,
                             Collectionxx.newList(a),
                             Collectionxx.newList(b))));
             return null;
@@ -522,24 +522,24 @@ public class STool implements SToolInterface {
     }
 
     private SAnnotationConflict toSAnnotationConflict(MostSimilarSubsequenceMapping.ConflictEntry<SAnnotation> c) {
-        SConflictTypes type = null;
+        SConflictType type = null;
         if (c instanceof MostSimilarSubsequenceMapping.ListConflictEntry)
-            type = SConflictTypes.list;
+            type = SConflictType.List$.MODULE$;
         else if (c instanceof MostSimilarSubsequenceMapping.SetConflictEntry)
-            type = SConflictTypes.set;
+            type = SConflictType.Set$.MODULE$;
         else if (c instanceof MostSimilarSubsequenceMapping.UpdateDeleteConflictEntry)
-            type = SConflictTypes.updatedelete;
+            type = SConflictType.UpdateDelete$.MODULE$;
         return new SAnnotationConflict(type, c.getLeftvalues(), c.getRightvalues());
     }
 
     private SElementConflict<?> toSElementConflict(MostSimilarSubsequenceMapping.ConflictEntry<SElementOrTuple<?>> c) {
-        SConflictTypes type = null;
+        SConflictType type = null;
         if (c instanceof MostSimilarSubsequenceMapping.ListConflictEntry)
-            type = SConflictTypes.list;
+            type = SConflictType.List$.MODULE$;
         else if (c instanceof MostSimilarSubsequenceMapping.SetConflictEntry)
-            type = SConflictTypes.set;
+            type = SConflictType.Set$.MODULE$;
         else if (c instanceof MostSimilarSubsequenceMapping.UpdateDeleteConflictEntry)
-            type = SConflictTypes.updatedelete;
+            type = SConflictType.UpdateDelete$.MODULE$;
         List<SElement<?>> leftelements = new ArrayList<SElement<?>>();
         for (SElementOrTuple<?> x : c.getLeftvalues()) {
             if (x instanceof SElementTuple) leftelements.addAll(((SElementTuple<?>) x));
@@ -570,7 +570,7 @@ public class STool implements SToolInterface {
                 case ADD:
                     if (d.getTwovalues()) {
                         // Conflict
-                        added.add(new SAnnotationConflict(SConflictTypes.set, Collectionxx.newList(d.getValue()), Collectionxx.newList(d.getOthervalue())));
+                        added.add(new SAnnotationConflict(SConflictType.Set$.MODULE$, Collectionxx.newList(d.getValue()), Collectionxx.newList(d.getOthervalue())));
                     } else // No Conflict
                         added.add(d.getValue());
                     break;
@@ -580,7 +580,7 @@ public class STool implements SToolInterface {
                     if (o != null) annot = o.getAnnotation(d.getValue().namespace(), d.getValue().name());
                     if (d.getTwovalues()) {
                         // Conflict
-                        res.insert(o, new UpdateAnnotation(o, annot, new SAnnotationConflict(SConflictTypes.set, Collectionxx.newList(d.getValue()), Collectionxx.newList(d.getOthervalue()))));
+                        res.insert(o, new UpdateAnnotation(o, annot, new SAnnotationConflict(SConflictType.Set$.MODULE$, Collectionxx.newList(d.getValue()), Collectionxx.newList(d.getOthervalue()))));
                     } else // No Conflict
                         res.insert(o, new UpdateAnnotation(o, annot, d.getValue()));
                     break;
@@ -604,7 +604,7 @@ public class STool implements SToolInterface {
             SEditScript res = new SEditScript();
             res.insert(parent, new ReplaceElement(parent, o,
                     new SElementConflict(
-                            SConflictTypes.list,
+                            SConflictType.List$.MODULE$,
                             Collectionxx.newList(a),
                             Collectionxx.newList(b))));
             return res;
@@ -706,7 +706,7 @@ public class STool implements SToolInterface {
                         new ReplaceElement(parent, o,
                         		// TODO: Check equality and avoid conflict!
                                         new SElementConflict(
-                                        SConflictTypes.list,
+                                        SConflictType.List$.MODULE$,
                                         Collectionxx.newList(a),
                                         Collectionxx.newList(b))))
                 ;

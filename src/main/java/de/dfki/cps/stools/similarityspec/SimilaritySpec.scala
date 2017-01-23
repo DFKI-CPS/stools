@@ -1,6 +1,3 @@
-/*
- * Copyright (c) Serge Autexier, Dominik Dietrich, DFKI GmbH 2010.
- */
 package de.dfki.cps.stools.similarityspec
 
 import org.antlr.runtime._
@@ -16,13 +13,6 @@ import de.dfki.cps.utils.Collectionxx
 import org.antlr.runtime.tree.Tree
 import scala.collection.JavaConverters._
 
-/**
- * Created by IntelliJ IDEA.
- * User: autexier
- * Date: Nov 4, 2010
- * Time: 9:53:14 AM
- * To change this template use File | Settings | File Templates.
- */
 object SimilaritySpec {
   def fromString(s: String): List[SimilaritySpec] = {
     val input: ANTLRStringStream = new ANTLRStringStream(s)

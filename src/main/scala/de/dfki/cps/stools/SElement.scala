@@ -41,13 +41,13 @@ trait SElement[T] extends SElementOrTuple[T] with SElementOrConflict[T] {
 }
 
 case class SElementConflict[T](
-    @BeanProperty `type`: SConflictTypes,
+    @BeanProperty `type`: SConflictType,
     @BeanProperty left: java.util.List[SElement[_]],
     @BeanProperty right: java.util.List[SElement[_]]) extends SElementOrConflict[T] {
   override def toString = {
     val form =
-      if (getType == SConflictTypes.list) "C(%s|%s)"
-      else if (getType == SConflictTypes.updatedelete) "C<%s|%s>" 
+      if (getType == SConflictType.List) "C(%s|%s)"
+      else if (getType == SConflictType.UpdateDelete) "C<%s|%s>"
       else "C{%s|%s}"
     String.format(form,getLeft,getRight);
   }
