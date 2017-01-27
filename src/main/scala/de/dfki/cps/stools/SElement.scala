@@ -32,12 +32,17 @@ trait SElement[T] extends SElementOrTuple[T] with SElementOrConflict[T] {
 
   protected var patch = new SEditScript
 
-  def setEditScript(r: SEditScript) = {
+  def editScript_=(r: SEditScript) = {
     if (!patch.isEmpty) patch = new SEditScript()
     patch.insertAll(r)
   }
 
-  def getEditScript() = patch
+  def editScript = patch
+
+  @deprecated("use scala field instead","01/26/2017")
+  def getEditScript() = editScript
+  @deprecated("use scala field instead","01/26/2017")
+  def setEditScript(r: SEditScript) = editScript_=(r)
 }
 
 case class SElementConflict[T](
@@ -52,16 +57,3 @@ case class SElementConflict[T](
     String.format(form,getLeft,getRight);
   }
 }
-
-/*class SElementTuple[T] extends java.util.ArrayList[ISElement[_]] with SElementOrTuple[T] {
-  def contains(ens: ElementNameSpec) = 
-    this.exists { e => e.getNamespace() == ens.getNamespace && e.getType == ens.getName }
-  
-  def compatible(o: SElementTuple[_]) =
-    (o.size == this.size) && 
-    (this.zip(o).forall { case (a,b) => a.getNamespace == b.getNamespace && a.getType == b.getType })
-
-  def equals(o: SElementTuple[_]) =
-    (o.size == this.size) &&
-    (this.zip(o).forall { case (a,b) => a == b })
-}*/

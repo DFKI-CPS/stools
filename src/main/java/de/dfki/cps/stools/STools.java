@@ -168,7 +168,6 @@ public class STools extends HashMap<String, SToolInterface> {
         return specs;
     }
 
-
     public SToolInterface getSTool(String name) {
         if (containsKey(name)) return get(name);
         else {
@@ -176,6 +175,4 @@ public class STools extends HashMap<String, SToolInterface> {
             return null;
         }
     }
-
-
 }
